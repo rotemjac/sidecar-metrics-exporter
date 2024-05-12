@@ -1,11 +1,15 @@
 package main
 
-func mergeLists(listsGroups ...[]string) []string {
+import (
+    "strings"
+)
+
+func mergeToOneList(stringGroups ...string) []string {
     var mergedList []string
-    for _, list := range listsGroups {
-        for _, item := range list {
-            splitItems := strings.Split(item, ";")
-            mergedList = append(mergedList, splitItems...)
+    for _, str := range stringGroups {
+        splitItems := strings.Split(str, ";")
+        for _, item := range splitItems {
+            mergedList = append(mergedList, item)
         }
     }
     return mergedList

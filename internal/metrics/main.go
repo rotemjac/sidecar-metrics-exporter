@@ -4,14 +4,19 @@ import (
   "github.com/prometheus/client_golang/prometheus"
   "github.com/prometheus/client_golang/prometheus/promhttp"
   //"github.com/prometheus/client_golang/prometheus/promauto"
-  "github.com/rs/zerolog"
+  //"github.com/rs/zerolog"
+  "net/http"
 )
 
 var (
     registry = prometheus.NewRegistry()
-    gauges = ()
+    gauges = NewGaugeMap()
+    promHttpHandler = promhttp.Handler()
 )
 
+func GetPromHttp() (http.Handler){
+    return promHttpHandler
+}
 
 func RegisterAllMetrics(metricsList []string){
     for _, metricName := range metricsList {
@@ -22,7 +27,7 @@ func RegisterAllMetrics(metricsList []string){
         prometheus.MustRegister(gauge)
 	    gauges.AddGaugeToMap(metricName, gauge)
 	}
-    fmt.Println("gauges" ,gauges)
+    //fmt.Println("gauges" ,gauges)
 }
 
 func SetGauge(gaugeName string, gaugeValue float64){

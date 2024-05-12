@@ -1,4 +1,4 @@
 FROM scratch as runtime
 WORKDIR app
-COPY /artifacts/trino-sidecar-exporter .
-CMD ["./trino-sidecar-exporter"]
+COPY /artifacts/sidecar-metrics-exporter .
+CMD ["./sidecar-metrics-exporter"]

@@ -1,15 +1,18 @@
 package transport
 
 import (
+  "os"
   "net/http"
-  "runtime"
+  "time"
+  "io/ioutil"
+  //"runtime"
   "github.com/rs/zerolog"
 )
 
 const (
     DISABLE_KEEP_ALIVES bool = false
     MAX_IDLE_CONNS int = 1
-    IDLE_CONN_TIMEOUT int = 0
+    //IDLE_CONN_TIMEOUT int = 0
 )
 
 var (
@@ -31,32 +34,37 @@ func init() {
 		zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	}
 	logger = zerolog.New(os.Stderr).With().Logger()
-	logger.Debug().Msg(runtime.Caller(0), " initialized")
+	//logger.Debug().Msg(runtime.Caller(0), " initialized")
+	logger.Debug().Msg("Metrics module initialized..")
+
 
     // ############# Init ############# //
     tr = &http.Transport{
         DisableKeepAlives: DISABLE_KEEP_ALIVES,
         MaxIdleConns: MAX_IDLE_CONNS,
-        IdleConnTimeout: IDLE_CONN_TIMEOUT
+        IdleConnTimeout: 0,
     }
 }
 
-func GetMainContainerMetrics(headerName string, headerValue string) (string, error){
-    request := getNewRequest(headerName, headerValue)
+func GetMainContainerMetrics(url string, headerName string, headerValue string) (string, error){
+    request, err := getNewRequest(url, headerName, headerValue)
+    if err != nil {
+      	logger.Error().Msgf("Error in getNewRequest: " ,err)
+    }
     res, err := tr.RoundTrip(request)
     if err != nil {
-      	logger.Error().Msg("Error in transport RoundTrip: " ,err)
+      	logger.Error().Msgf("Error in transport RoundTrip: " ,err)
     }
 	logger.Debug().Msg("###########################")
-    logger.Debug().Msg(time.Now())
+    logger.Debug().Msg(time.Now().String())
     body, err := ioutil.ReadAll(res.Body)
     text := string(body)
     return text, err
 }
 
-func getNewRequest(headerName string, headerValue string) (*Request, error){
+func getNewRequest(url string, headerName string, headerValue string) (*http.Request, error){
     req, _ := http.NewRequest("GET", url, nil)
     req.Header.Set(headerName,headerValue)
     req.Close = false
-    return req,_
+    return req, nil
 }
