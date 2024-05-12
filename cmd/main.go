@@ -8,8 +8,8 @@ import (
   "strings"
   "github.com/rs/zerolog"
   "github.com/go-co-op/gocron"
-  "github.com/rotemjac/trino-sidecar-exporter/internal/transport"
-  "github.com/rotemjac/trino-sidecar-exporter/internal/metric"
+  "github.com/rotemjac/sidecar-metrics-exporter/internal/transport"
+  "github.com/rotemjac/sidecar-metrics-exporter/internal/metrics"
 )
 
 var (
@@ -62,7 +62,7 @@ func main(){
         os.Getenv("METRICS_GROUP5")
     )
    	logger.Debug().Msg("MetricsList: ", metricsList)
-    metric.RegisterAllMetrics(metricsList)
+    metrics.RegisterAllMetrics(metricsList)
 
     // Start a cron job to poll main container every SCRAPE_INTERVAL seconds
     s := gocron.NewScheduler(time.UTC)
@@ -94,7 +94,7 @@ func main(){
                 gaugeName := arr[0]
                 gaugeValue := valFloat
                 logger.Debug().Msg(gaugeName, gaugeValue)
-                metric.SetGauge(gaugeName, gaugeValue)
+                metrics.SetGauge(gaugeName, gaugeValue)
              }
          }
     }
