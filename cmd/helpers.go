@@ -9,7 +9,9 @@ func mergeToOneList(stringGroups ...string) []string {
     for _, str := range stringGroups {
         splitItems := strings.Split(str, ";")
         for _, item := range splitItems {
-            mergedList = append(mergedList, item)
+            if item != "" {
+                mergedList = append(mergedList, item)
+            }
         }
     }
     return mergedList

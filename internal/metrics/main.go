@@ -20,14 +20,15 @@ func GetPromHttp() (http.Handler){
 
 func RegisterAllMetrics(metricsList []string){
     for _, metricName := range metricsList {
-	    // Define a new gauge metric
-        gauge := prometheus.NewGauge(prometheus.GaugeOpts{
-            Name: metricName,
-        })
-        prometheus.MustRegister(gauge)
-	    gauges.AddGaugeToMap(metricName, gauge)
+	    if metricName != "" {
+       	    // Define a new gauge metric
+            gauge := prometheus.NewGauge(prometheus.GaugeOpts{
+                Name: metricName,
+            })
+            prometheus.MustRegister(gauge)
+            gauges.AddGaugeToMap(metricName, gauge)
+	    }
 	}
-    //fmt.Println("gauges" ,gauges)
 }
 
 func SetGauge(gaugeName string, gaugeValue float64){

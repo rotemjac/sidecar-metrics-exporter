@@ -46,14 +46,14 @@ func init() {
     }
 }
 
-func GetMainContainerMetrics(url string, headerName string, headerValue string) (string, error){
+func CallMainContainerEndpoint(url string, headerName string, headerValue string) (string, error){
     request, err := getNewRequest(url, headerName, headerValue)
     if err != nil {
-      	logger.Error().Msgf("Error in getNewRequest: " ,err)
+      	logger.Error().Msgf("Error in getNewRequest: %s" ,err)
     }
     res, err := tr.RoundTrip(request)
     if err != nil {
-      	logger.Error().Msgf("Error in transport RoundTrip: " ,err)
+      	logger.Error().Msgf("Error in transport RoundTrip: %s" ,err)
     }
 	logger.Debug().Msg("###########################")
     logger.Debug().Msg(time.Now().String())
@@ -64,7 +64,9 @@ func GetMainContainerMetrics(url string, headerName string, headerValue string) 
 
 func getNewRequest(url string, headerName string, headerValue string) (*http.Request, error){
     req, _ := http.NewRequest("GET", url, nil)
-    req.Header.Set(headerName,headerValue)
+    if (headerName != "") {
+        req.Header.Set(headerName,headerValue)
+    }
     req.Close = false
     return req, nil
 }

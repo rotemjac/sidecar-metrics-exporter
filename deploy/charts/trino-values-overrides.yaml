@@ -1,0 +1,76 @@
+sidecarContainers:
+   coordinator:
+     - name: jmx-sidecar-exporter-coordinator
+       image: jmx-sidecar-exporter:1.51
+       imagePullPolicy: IfNotPresent
+       resources:
+         limits:
+           memory: 256Mi
+         requests:
+           cpu: 10m
+           memory: 100Mi
+       env:
+       - name: LOG_LEVEL
+         value: "DEBUG"
+       - name: SCRAPING_ENDPOINT
+         value: "http://127.0.0.1:8080/metrics"
+       - name: SCRAPE_INTERVAL
+         value: "30"
+       - name: HEADER_NAME
+         value: "X-Trino-User"
+       - name: HEADER_VALUE
+         value: "admin"
+       - name: METRICS_GROUP1
+         value: "trino_memory_type_MemoryPool_name_general_MaxBytes;trino_memory_type_MemoryPool_name_general_ReservedBytes;trino_execution_name_QueryManager_QueuedQueries"
+       - name: METRICS_GROUP2
+         value: "trino_execution_name_SqlQueryManager_QueryTracker_AllQueriesCount"
+       - name: NEW_METRICS_PORT
+         value: "9090"
+       ports:
+         - name: http
+           containerPort: 9090
+           protocol: TCP
+       readinessProbe:
+           httpGet:
+             path: /readiness
+             port: 9090
+           initialDelaySeconds: 75
+           periodSeconds: 20
+
+   worker:
+     - name: jmx-sidecar-exporter-worker
+       image: jmx-sidecar-exporter:1.51
+       imagePullPolicy: IfNotPresent
+       resources:
+         limits:
+           memory: 256Mi
+         requests:
+           cpu: 10m
+           memory: 100Mi
+       env:
+       - name: LOG_LEVEL
+         value: "DEBUG"
+       - name: SCRAPING_ENDPOINT
+         value: "http://127.0.0.1:8080/metrics"
+       - name: SCRAPE_INTERVAL
+         value: "30"
+       - name: HEADER_NAME
+         value: "X-Trino-User"
+       - name: HEADER_VALUE
+         value: "admin"
+       - name: METRICS_GROUP1
+         value: "trino_memory_type_MemoryPool_name_general_MaxBytes;trino_memory_type_MemoryPool_name_general_ReservedBytes;trino_execution_name_QueryManager_QueuedQueries"
+       - name: METRICS_GROUP2
+         value: "trino_execution_name_SqlQueryManager_QueryTracker_AllQueriesCount"
+       - name: NEW_METRICS_PORT
+         value: "9090"
+       ports:
+         - name: http
+           containerPort: 9090
+           protocol: TCP
+       readinessProbe:
+           httpGet:
+             path: /readiness
+             port: 9090
+           initialDelaySeconds: 75
+           periodSeconds: 20
